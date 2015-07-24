@@ -19,7 +19,7 @@ task integrationTest(type: Test) {
 }
 
 dependencies {
-    integrationTestCompile 'org.springframework:spring-test:4.1.1.RELEASE'
+    compileIntegrationTest 'org.springframework:spring-test:4.1.1.RELEASE'
 }
 
 check.dependsOn integrationTest
