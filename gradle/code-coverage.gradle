@@ -2,7 +2,7 @@ apply plugin: 'jacoco'
 
 tasks.withType(Test) {
     jacoco {
-        enabled = project.hasProperty('codeCoverageEnabled') ? Boolean.valueOf(project.getProperty('codeCoverageEnabled')) : false
+        enabled = project.hasProperty('codeCoverageEnabled') ? Boolean.valueOf(project.getProperty('codeCoverageEnabled')) : true
     }
 }
 

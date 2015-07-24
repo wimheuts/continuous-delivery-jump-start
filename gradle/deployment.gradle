@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.hidetake:gradle-ssh-plugin:0.4.5'
+    }
+}
+
+apply plugin: org.hidetake.gradle.ssh.plugin.SshPlugin
+
+remotes {
+    vagrant {
+        host = '192.168.1.33'
+        user = 'vagrant'
+        // identity = file("${System.properties['user.home']}/.vagrant.d/insecure_private_key")
+        password = 'vagrant'
+    }
+}
+
+task deploy {
+    description = 'Deploys application to target environment.'
+    
+    doLast {
+        def remoteForEnv = getRemoteForEnviroment()
+        Task warTask = project.tasks.getByName('war')
+        File webAppArtifactPath = warTask.archivePath
+        String webAppArtifactName = warTask.archiveName
+                
+        ssh.run {
+            session(remoteForEnv) {
+                execute 'sudo service tomcat7 stop'
+                put webAppArtifactPath, '/tmp'
+                execute "sudo mv /tmp/$webAppArtifactName /tmp/sample-app.war"
+                execute "sudo rm -rf /var/lib/tomcat7/webapps/sample-app"
+                execute "sudo mv /tmp/sample-app.war /var/lib/tomcat7/webapps"
+                execute 'sudo service tomcat7 start'
+            }
+        }
+    }
+}
+
+def getRemoteForEnviroment() {
+    def env = project.hasProperty('env') ? project.getProperty('env') : 'local'
+    
+    if(env == 'local') {
+        // Allow any host for local development
+        ssh.settings {
+            knownHosts = allowAnyHosts
+        }
+        
+        return remotes.vagrant        
+    }
+    else {
+        throw new GradleException("Unsupported deployment environent: '$env'")
+    }
+}
