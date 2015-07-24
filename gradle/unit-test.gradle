@@ -1,0 +1,12 @@
+test {
+    reports {
+        html.destination = file("$html.destination/unit")
+        junitXml.destination = file("$junitXml.destination/unit")
+    }
+    
+    maxParallelForks = 2
+    
+    testLogging {
+        events 'skipped'
+    }
+}
