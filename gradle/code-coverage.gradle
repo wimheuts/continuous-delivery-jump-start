@@ -1,0 +1,31 @@
+apply plugin: 'jacoco'
+
+tasks.withType(Test) {
+    jacoco {
+        enabled = project.hasProperty('codeCoverageEnabled') ? Boolean.valueOf(project.getProperty('codeCoverageEnabled')) : false
+    }
+}
+
+ext {
+    jacocoReportsBaseDir = file("$buildDir/reports/jacoco")
+    jacocoReportsExecDir = file("$jacocoReportsBaseDir/exec")
+    jacocoReportsHtmlDir = file("$jacocoReportsBaseDir/html")
+}
+
+test.jacoco.destinationFile = file("$jacocoReportsExecDir/unit.exec")
+integrationTest.jacoco.destinationFile = file("$jacocoReportsExecDir/integration.exec")
+
+jacocoTestReport {
+    reports {
+        html.destination file("$jacocoReportsHtmlDir/unit")
+    }
+}
+
+task jacocoIntegrationTestReport(type: JacocoReport) {
+    executionData integrationTest
+    sourceSets sourceSets.main
+
+    reports {
+        html.destination file("$jacocoReportsHtmlDir/integration")
+    }
+}
