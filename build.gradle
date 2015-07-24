@@ -12,6 +12,8 @@ apply plugin: 'war'
 apply plugin: 'idea'
 apply plugin: 'com.bmuschko.tomcat'
 apply from: 'gradle/unit-test.gradle'
+apply from: 'gradle/integration-test.gradle'
+apply from: 'gradle/findbugs.gradle'
 
 group = 'org.gradle.training'
 
